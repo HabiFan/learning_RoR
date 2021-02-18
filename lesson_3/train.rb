@@ -1,5 +1,5 @@
 class Train
-  attr_accessor :speed, :current_station, :next_station, :last_station, :route
+  attr_accessor :speed, :current_station, :route
   attr_reader  :num_carriage, :number, :type
 
   def initialize(number, type, num_carriage)
@@ -27,32 +27,44 @@ class Train
     @route = route
     @current_station = @route.stations.first
     @current_station.take_train(self)
-    @next_station = @route.stations[1]
   end
 
   def next_route
-    station_index = self.route.stations.index(self.current_station)
-    if station_index != (@route.stations.size - 1)
+    if @current_station != @route.end_station
       @current_station.send_train(self)
-      @current_station = @route.stations[station_index + 1]
-      @route.stations.last ? @next_station = @route.stations[station_index + 2] : nil
-      @last_station = @route.stations[station_index]
+      @current_station = @route.stations[current_index + 1]
       @current_station.take_train(self)
     else
+       @next_station = nil
        puts "Это последняя станция. Поезд прибыл!"
     end
   end
 
   def last_route
-    station_index = self.route.stations.index(self.current_station)
-    if (station_index - 1) >= 0
+    if @current_station != @route.begin_station
       @current_station.send_train(self)
-      @current_station = @route.stations[station_index - 1]
-      @next_station = @route.stations[station_index]
-      (station_index - 1) > 0 ? @last_station = @route.stations[station_index - 2] : nil
+      @current_station = @route.stations[current_index - 1]
       @current_station.take_train(self)
     else
+       @last_station = nil
        puts "Это первая станция!"
     end
   end
+
+  def next_station
+    @current_station != @route.end_station ? @route.stations[current_index + 1] : nil
+  end
+
+  def last_station
+    @current_station == @route.begin_station ? nil : @route.stations[current_index - 1]
+  end
+
+  private
+
+  def current_index
+    self.route.stations.index(self.current_station)
+  end
+
+
+
 end
