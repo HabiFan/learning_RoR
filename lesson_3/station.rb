@@ -14,7 +14,7 @@ class Station
   end
 
   def trains_by_type(type)
-    return "Нет поездов!" if @trains.empty?
+    return if @trains.empty?
     @trains.select { |train| train.type == type }
   end
 end

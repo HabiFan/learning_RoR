@@ -30,23 +30,17 @@ class Train
   end
 
   def next_route
-    if @current_station != @route.end_station
-      @current_station.send_train(self)
-      @current_station = @route.stations[current_index + 1]
-      @current_station.take_train(self)
-    else
-       puts "Это последняя станция. Поезд прибыл!"
-    end
+    return unless next_station
+    @current_station.send_train(self)
+    @current_station = next_station
+    @current_station.take_train(self)
   end
 
   def last_route
-    if @current_station != @route.begin_station
-      @current_station.send_train(self)
-      @current_station = @route.stations[current_index - 1]
-      @current_station.take_train(self)
-    else
-       puts "Это первая станция!"
-    end
+    return unless last_station
+    @current_station.send_train(self)
+    @current_station = last_station
+    @current_station.take_train(self)  
   end
 
   def next_station
