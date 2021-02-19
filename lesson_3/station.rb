@@ -13,15 +13,8 @@ class Station
     @trains.delete(train)
   end
 
-  def current_take_trains
+  def trains_by_type(type)
     return "Нет поездов!" if @trains.empty?
-    @trains.each { |train| puts "Поезд номером: #{train.number}" }
-  end
-
-  def current_take_trains_type
-    return "Нет поездов!" if @trains.empty?
-    count_freight = 0
-    @trains.each { |train| count_freight += 1 if train.type == 1 }
-    puts "Количество поездов: #{@trains.size} из них грузовых: #{count_freight}, пассажирских: #{@trains.size - count_freight}"
+    @trains.select { |train| train.type == type }
   end
 end

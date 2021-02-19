@@ -35,7 +35,6 @@ class Train
       @current_station = @route.stations[current_index + 1]
       @current_station.take_train(self)
     else
-       @next_station = nil
        puts "Это последняя станция. Поезд прибыл!"
     end
   end
@@ -46,17 +45,16 @@ class Train
       @current_station = @route.stations[current_index - 1]
       @current_station.take_train(self)
     else
-       @last_station = nil
        puts "Это первая станция!"
     end
   end
 
   def next_station
-    @current_station != @route.end_station ? @route.stations[current_index + 1] : nil
+    @route.stations[current_index + 1] if @current_station != @route.end_station
   end
 
   def last_station
-    @current_station == @route.begin_station ? nil : @route.stations[current_index - 1]
+    @route.stations[current_index - 1] if @current_station != @route.begin_station
   end
 
   private
