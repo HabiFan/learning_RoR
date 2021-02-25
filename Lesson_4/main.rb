@@ -21,14 +21,18 @@ class MainApp
     loop do
       puts START_MENU
       menu_items = gets.chomp.to_i
-
-      case
-      create_station if menu_items == 1
-      menu_train if menu_items == 2
-      menu_route if menu_items == 3
-      menu_train_route if menu_items == 4 && !trains.empty?
-      menu_info if menu_items == 5 && !stations.empty?
-      break if menu_items == 6
+      case menu_items
+      when 1
+        puts "Введите название станиции: "
+        create_station
+      when 2 then menu_train
+      when 3 then menu_route
+      when 4 then menu_train_route if !trains.empty?
+      when 5 then menu_info if !stations.empty?
+      when 6 then break
+      else
+        INFO_LABEL
+      end
     end
   end
 
@@ -83,17 +87,26 @@ class MainApp
       2. Грузовой
   here
 
+  INFO_LABEL = "Выберите нужное действие"
+
   def menu_train
     loop do
       puts TRAIN_MENU
       menu_items = gets.chomp.to_i
-      if menu_items == 1
+      case menu_items
+      when 1
         puts TRAIN_SUB_MENU
-        create_train(gets.chomp.to_i)
+        selected_items = gets.chomp.to_i
+        puts "Введите номер поезда: "
+        create_train(selected_items)
+      when 2
+        add_carriage_train(object_select(trains, :@number)) if !trains.empty?
+      when 3
+        object_select(trains, :@number).drop_carriage if !trains.empty?
+      when 4 then break
+      else
+        INFO_LABEL
       end
-      add_carriage_train(object_select(trans)) if menu_items == 2 && !trains.empty?
-      object_select(trans).drop_carriage if menu_items == 3 && !trains.empty?
-      break if menu_items == 4
     end
   end
 
@@ -101,32 +114,49 @@ class MainApp
     loop do
       puts ROUTE_MENU
       menu_items = gets.chomp.to_i
-      create_route if menu_items == 1
-      insert_route if menu_items == 2
-      delete_station_route if menu_items == 3 && !routes.empty?
-      add_train_route if menu_items == 4 && !trains.empty?
-      break if menu_items == 5
+      if menu_items == 1
+        puts "Выберите начальную станцию: "
+        start_station = object_select(stations, :@name)
+        puts "Выберите конечную станцию: "
+        end_station = object_select(stations, :@name)
+        routes << Route.new(start_station, end_station)
+      elsif menu_items == 2
+        puts "Выберите маршрут и станцию: "
+        route_select.add_station(object_select(stations, :@name))
+      elsif menu_items == 3 && !routes.empty?
+        puts "Выберите маршрут и нужную станцию: "
+        delete_station_route(route_select)
+      elsif menu_items == 4 && !trains.empty?
+        puts "Выберите поезд и нужный маршрут: "
+        object_select(trains, :@number).route_train(route_select)
+      elsif menu_items == 5
+        break
+      else
+        INFO_LABEL
+      end
     end
   end
 
   def menu_train_route
     train = object_select(trains, :@number)
-    if train.route.nil?
-      puts "Для данного поезда нет маршрута"
-    else
+    unless train.route.nil?
       loop do
         puts TRAIN_ROUTE_SUB_MENU
         menu_items = gets.chomp.to_i
-        if menu_items == 1
+        case menu_items
+        when 1
           train.next_route
           puts "Поезд на конечной станции" unless !train.next_station.nil?
-        end
-        if menu_items == 2
+        when 2
           train.last_route
           puts "Поезд в начале маршрута" unless !train.last_station.nil?
+        when 3 then break
+        else
+          INFO_LABEL
         end
-        break if menu_items == 3
       end
+    else
+      puts "Для данного поезда нет маршрута"
     end
   end
 
@@ -134,23 +164,23 @@ class MainApp
     loop do
       puts INFO_SUB_MENU
       menu_items = gets.chomp.to_i
-      stations.each { |station| puts "#{station.name}" } if menu_items == 1
-      trains.each { |train|  puts "На станции: #{train.current_station.name} находится поезд: #{train.number} "} if menu_items == 2
-      break if menu_items == 3
+      case menu_items
+      when 1
+        stations.each { |station| puts "#{station.name}" }
+      when 2
+        trains.each { |train| puts "На станции: #{train.current_station.name} находится поезд: #{train.number} "}
+      when 3 then break
+      else
+        INFO_LABEL
+      end
     end
   end
 
-  private
-
-  attr_writer :stations, :trains, :routes
-
   def create_station
-    puts "Введите название станиции: "
     stations << Station.new(gets.chomp)
   end
 
   def create_train(type)
-    puts "Введите номер поезда: "
     trains << (type == 1 ? PassengerTrain.new(gets.chomp) : CargoTrain.new(gets.chomp))
   end
 
@@ -162,47 +192,20 @@ class MainApp
     end
   end
 
-  def drop_carriage_train(train)
-    tran.drop_carriage
-  end
-
-
   def object_select(obj, var1)
     obj.each_with_index { |value, index| puts "#{index + 1}. #{value.instance_variable_get(var1)}" }
     obj[gets.chomp.to_i - 1]
   end
 
   def route_select
-    puts "Выберите маршрут: "
     routes.each_with_index { |route, index| puts "#{index + 1}. #{route.begin_station.name}..#{route.end_station.name}" }
     routes[gets.chomp.to_i - 1]
   end
 
-  def create_route
-    puts "Выберите начальную станцию: "
-    start_station = object_select(stations, :@name)
-    puts "Выберите конечную станцию: "
-    end_station = object_select(stations, :@name)
-    routes << Route.new(start_station, end_station)
-  end
-
-  def insert_route
-    puts "Выберите станцию: "
-    route_select.add_station(object_select(stations, :@name))
-  end
-
-  def add_train_route
-    puts "Выберите поезд: "
-    object_select(trains, :@number).route_train(route_select)
-  end
-
-  def delete_station_route
-    selected = route_select
-    puts "Выберите станцию: "
+  def delete_station_route(selected)
     selected.stations.each_with_index { |station, index| puts "#{index + 1}. #{station.name}" }
     selected.delete_station(selected.stations[gets.chomp.to_i - 1])
   end
 end
 
-app = MainApp.new
-app.run
+MainApp.new
