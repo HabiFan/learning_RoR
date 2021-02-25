@@ -10,6 +10,32 @@ require_relative "cargo_carriage"
 class MainApp
   attr_reader :stations, :trains, :routes
 
+  def initialize
+    @stations = []
+    @trains = []
+    @routes =[]
+    start_menu
+  end
+
+  def start_menu
+    loop do
+      puts START_MENU
+      menu_items = gets.chomp.to_i
+
+      case
+      create_station if menu_items == 1
+      menu_train if menu_items == 2
+      menu_route if menu_items == 3
+      menu_train_route if menu_items == 4 && !trains.empty?
+      menu_info if menu_items == 5 && !stations.empty?
+      break if menu_items == 6
+    end
+  end
+
+  private
+
+  attr_writer :stations, :trains, :routes
+
   START_MENU = <<~here
       Выберите нужное действие
       1. Создать станцию
@@ -56,26 +82,6 @@ class MainApp
       1. Пассажирский
       2. Грузовой
   here
-
-  def initialize
-    @stations = []
-    @trains = []
-    @routes =[]
-    start_menu
-  end
-
-  def start_menu
-    loop do
-      puts START_MENU
-      menu_items = gets.chomp.to_i
-      create_station if menu_items == 1
-      menu_train if menu_items == 2
-      menu_route if menu_items == 3
-      menu_train_route if menu_items == 4 && !trains.empty?
-      menu_info if menu_items == 5 && !stations.empty?
-      break if menu_items == 6
-    end
-  end
 
   def menu_train
     loop do
@@ -156,6 +162,11 @@ class MainApp
     end
   end
 
+  def drop_carriage_train(train)
+    tran.drop_carriage
+  end
+
+
   def object_select(obj, var1)
     obj.each_with_index { |value, index| puts "#{index + 1}. #{value.instance_variable_get(var1)}" }
     obj[gets.chomp.to_i - 1]
@@ -192,3 +203,6 @@ class MainApp
     selected.delete_station(selected.stations[gets.chomp.to_i - 1])
   end
 end
+
+app = MainApp.new
+app.run
