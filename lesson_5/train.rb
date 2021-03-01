@@ -7,14 +7,14 @@ class Train
   attr_accessor :speed
   attr_reader  :number, :type, :carriage, :current_station, :route
 
-  @@trains = []
+  @@trains = {}
 
   def self.trains
     @@trains
   end
 
   def self.find(number_train)
-    self.trains.select { |train| train.number == number_train }
+    self.trains.select { |key| key == number_train }
   end
 
   def initialize(number, type)
@@ -22,7 +22,7 @@ class Train
     @type = type
     @carriage = []
     self.speed = 0
-    self.class.trains << self
+    self.class.trains[number] = type
   end
 
   def stop
