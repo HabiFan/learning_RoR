@@ -1,14 +1,5 @@
 module MadeCompany
-  attr_reader :company_name
-
-  def made_company(name)
-    self.company_name = name
-  end
-
-protected
-
-attr_writer:company_name
-
+  attr_accessor :company_name
 end
 
 module InstanceCounter
@@ -19,19 +10,15 @@ module InstanceCounter
   end
 
   module ClassMethods
-    @@instances = 0
+    attr_writer :instances
 
     def instances
-      @@instances
-    end
-
-    def instances=(value)
-      @@instances = value
+      @instances ||= 0
     end
   end
 
   module InstanceMethods
-    protected
+    private
 
     def register_instance
       self.class.instances += 1
