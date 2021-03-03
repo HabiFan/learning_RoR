@@ -96,8 +96,8 @@ class MainApp
       case menu_items
       when 1
         puts TRAIN_SUB_MENU
-        selected_items = gets.chomp.to_i
-        puts "Введите номер поезда: "
+        selected_items = gets.chomp.to_i        
+        puts "Введите номер (XXXXX или ХХХ-ХХ) поезда: "
         create_train(selected_items)
       when 2
         add_carriage_train(object_select(trains, :@number)) if !trains.empty?
@@ -182,6 +182,14 @@ class MainApp
 
   def create_train(type)
     trains << (type == 1 ? PassengerTrain.new(gets.chomp) : CargoTrain.new(gets.chomp))
+    puts "Поезд успешно добавлен!"
+    rescue RuntimeError => e
+      puts e.message
+      puts "Повторите попытку!"
+      retry
+    rescue StandardError => e
+      puts e.message
+      puts "Повторите попытку!"
   end
 
   def add_carriage_train(train)
