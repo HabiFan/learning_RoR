@@ -24,6 +24,10 @@ class Route
     @stations.delete(station) if station != (@begin_station && @end_station)
   end
 
+  def to_s
+    "#{@begin_station}..#{@end_station}"
+  end
+
   private
 
   def validate!

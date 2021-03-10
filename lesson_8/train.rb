@@ -13,7 +13,7 @@ class Train
   NUMBER_FORMAT = /^(\w|[а-я0-9]){3}+-*+(\w|[а-я0-9]){2}$/i.freeze
   TYPE_FORMAT = /^([a-z]|[а-я]){3,}$/i.freeze
 
-  class << self; attr_reader :trains; end
+  class << self; attr_accessor :trains; end
 
   def self.find(number_train)
     trains.select { |key| key == number_train }
@@ -69,10 +69,12 @@ class Train
 
   def next_station
     @route.stations[current_index + 1] if @current_station != @route.end_station
+    puts 'Это конечная станция' if @current_station == @route.end_station
   end
 
   def last_station
     @route.stations[current_index - 1] if @current_station != @route.begin_station
+    puts 'Это начальная станция' if @current_station == @route.begin_station
   end
 
   def train_passenger?
@@ -81,6 +83,10 @@ class Train
 
   def list_carriage(&block)
     @carriages.each(&block) if block_given?
+  end
+
+  def to_s
+    "Поезд №: #{number} тип: #{type} кол-во вагонов: #{carriages.count}"
   end
 
   private

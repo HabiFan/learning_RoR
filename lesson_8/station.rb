@@ -39,6 +39,10 @@ class Station
     @trains.each(&block) if block_given?
   end
 
+  def to_s
+    name.to_s
+  end
+
   private
 
   def validate!
