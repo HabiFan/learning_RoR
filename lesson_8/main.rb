@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+
 require_relative 'station'
 require_relative 'route'
 require_relative 'train'
@@ -199,5 +201,6 @@ class MainApp
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
 
 MainApp.new

@@ -67,6 +67,8 @@ end
 module AppMenuCaptions
   attr_reader :labels
 
+  # rubocop:disable Metrics/MethodLength
+
   def initialize
     @labels = {
       station: 'Введите название станиции: ',
@@ -83,6 +85,8 @@ module AppMenuCaptions
       train_start_station: 'Поезд в начале маршрута'
     }
   end
+
+  # rubocop:enable Metrics/MethodLength
 
   protected
 

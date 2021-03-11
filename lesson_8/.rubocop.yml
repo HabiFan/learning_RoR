@@ -3,12 +3,3 @@ AllCops:
 
 Style/Documentation:
   Enabled: false
-
-Metrics/MethodLength:
-  Max: 15
-
-Metrics/ClassLength:
-  Max: 165
-
-Layout/LineLength:
-  Max: 130
