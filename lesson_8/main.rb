@@ -28,8 +28,8 @@ class MainApp
       case gets.chomp.to_i
       when 1 then menu_create
       when 2 then menu_train unless trains.empty?
-      when 3 then menu_route unless routes.empty?
-      when 4 then menu_info unless stations.empty?
+      when 3 then menu_route
+      when 4 then menu_info
       when 5 then break
       else INFO_LABEL; end
     end
@@ -91,6 +91,8 @@ class MainApp
   end
 
   def menu_route
+    return if routes.empty?
+
     selected_route ||= object_select(routes)
     loop do
       puts ROUTE_MENU
@@ -116,6 +118,8 @@ class MainApp
 
   def menu_info
     loop do
+      break if stations.empty?
+
       puts INFO_SUB_MENU
       case gets.chomp.to_i
       when 1 then stations.each { |station| puts station.name.to_s }
