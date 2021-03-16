@@ -4,15 +4,6 @@ module MadeCompany
   attr_accessor :company_name
 end
 
-module Validation
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-end
-
 module InstanceCounter
   def self.included(base)
     base.extend ClassMethods
