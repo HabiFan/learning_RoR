@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-#
-# require_relative 'modules'
-# require_relative 'validation'
-
 class Train
   include MadeCompany
   include InstanceCounter

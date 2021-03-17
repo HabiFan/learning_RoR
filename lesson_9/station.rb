@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'modules'
-require_relative 'validation'
-
 class Station
   include InstanceCounter
   include Validation

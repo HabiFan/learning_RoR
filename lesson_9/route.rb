@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'validation'
-require_relative 'modules'
-
 class Route
   include InstanceCounter
   include Validation
