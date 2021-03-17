@@ -1,31 +1,23 @@
 # frozen_string_literal: true
 
-require_relative 'modules'
+#
+# require_relative 'modules'
+# require_relative 'validation'
 
 class Carriage
   include MadeCompany
   include Validation
 
-  attr_reader :type
+  attr_reader :type_carriage
 
   TYPE_FORMAT = /^([a-z]|[а-я]){3,}$/i.freeze
 
-  def initialize(type)
-    @type = type
+  validate :type_carriage, :presence
+  validate :type_carriage, :type, Symbol
+  validate :type_carriage, :format, TYPE_FORMAT
+
+  def initialize(type_carriage)
+    @type_carriage = type_carriage
     validate!
-  end
-
-  private
-
-  def validate!
-    raise 'Тип вагона должен быть Symbol' unless type.instance_of? Symbol
-
-    if type !~ TYPE_FORMAT
-      raise 'Неверные формат вагона!
-             Тип должен содержать не менее 3-х символов,
-             включая только строчные или прописные буквы!'
-    end
-
-    true
   end
 end

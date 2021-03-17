@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'modules'
+require_relative 'validation'
 
 class Station
   include InstanceCounter
@@ -9,6 +10,10 @@ class Station
   attr_reader :name, :trains
 
   NAME_FORMAT = /^([a-z]|[а-я])+\d*$/i.freeze
+
+  validate :name, :type, String
+  validate :name, :format, NAME_FORMAT
+  validate :name, :presence
 
   class << self; attr_accessor :all; end
 
@@ -46,9 +51,9 @@ class Station
   private
 
   def validate!
-    raise 'Имя станции может быть только текстовым' unless name.instance_of? String
-    raise 'Имя станции должен начинатся с строчных или прописных букв' if name !~ NAME_FORMAT
     raise 'Имя станции должен содержать не менее 3-х символов' if name.to_s.length < 3
+
+    super
 
     true
   end

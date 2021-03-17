@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Validation
   def self.included(base)
     base.extend ClassMethods
@@ -5,12 +7,12 @@ module Validation
   end
 
   module ClassMethods
-    def validation_list
-      @validation_list ||= []
+    def validations
+      @validations ||= []
     end
 
     def validate(attr, type, option = nil)
-      validation_list << [attr, type, option]
+      validations << [attr, type, option]
     end
   end
 
@@ -24,5 +26,26 @@ module Validation
 
     private
 
+    def validation_exec(attr, type, option = nil)
+      var_value = instance_variable_get("@#{attr}")
+      send "#{type}_validation", var_value, option
+    end
+
+    def format_validation(value, option)
+      raise "Значение #{value} не соответствует формату." if !value.to_s.empty? && (value.to_s !~ option)
+    end
+
+    def presence_validation(value, _option)
+      raise "Значение #{value} не может быть пустым." if value.nil? || value.to_s.empty?
+    end
+
+    def type_validation(value, option)
+      raise "Для значения #{value} не задан класс для валидации." if option.nil?
+      raise "Значение #{value} не совпадает с заданным классом." unless value.is_a? option
+    end
+
+    def validate!
+      self.class.validations.each { |validation| validation_exec(*validation) }
+    end
   end
 end

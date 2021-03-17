@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'validation'
+require_relative 'modules'
+
 class Route
   include InstanceCounter
   include Validation
 
   attr_reader :stations, :begin_station, :end_station
+
+  validate :begin_station, :type, Station
+  validate :end_station, :type, Station
 
   def initialize(begin_station, end_station)
     @begin_station = begin_station
@@ -26,14 +32,5 @@ class Route
 
   def to_s
     "#{@begin_station}..#{@end_station}"
-  end
-
-  private
-
-  def validate!
-    raise 'Не верный формат начальной станции!' unless begin_station.is_a?(Station)
-    raise 'Не верный формат конечной станции!' unless end_station.is_a?(Station)
-
-    true
   end
 end

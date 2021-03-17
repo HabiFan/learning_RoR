@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 module Accessors
-  def attr_accessor_with_history (*attrs)
+  # rubocop:disable Metrics/MethodLength
+
+  def attr_accessor_with_history(*attrs)
     attrs.each do |attr|
       var_attr = "@#{attr}".to_sym
       var_hist = "@#{attr}_his"
@@ -16,13 +20,15 @@ module Accessors
     end
   end
 
+  # rubocop:enable Metrics/MethodLength
+
   def strong_attr_accessor(name, type)
     var_name = "@#{name}".to_sym
 
     define_method(name) { instance_variable_get(var_name) }
 
     define_method("#{name}=") do |value|
-      raise TypeError, 'Не верный тип.' unless value.is_a? type
+      raise 'Не верный тип.' unless value.is_a? type
 
       instance_variable_set(var_name, value)
     end

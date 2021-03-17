@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'modules'
+#
+# require_relative 'modules'
+# require_relative 'validation'
 
 class Train
   include MadeCompany
@@ -8,10 +10,16 @@ class Train
   include Validation
 
   attr_accessor :speed
-  attr_reader :number, :type, :carriages, :current_station, :route
+  attr_reader :number, :type_train, :carriages, :current_station, :route
 
   NUMBER_FORMAT = /^(\w|[а-я0-9]){3}+-*+(\w|[а-я0-9]){2}$/i.freeze
   TYPE_FORMAT = /^([a-z]|[а-я]){3,}$/i.freeze
+
+  validate :number, :format, NUMBER_FORMAT
+  validate :number, :presence
+  validate :number, :type, String
+  validate :type_train, :type, Symbol
+  validate :type_train, :format, TYPE_FORMAT
 
   class << self; attr_accessor :trains; end
 
@@ -19,14 +27,14 @@ class Train
     trains.select { |key| key == number_train }
   end
 
-  def initialize(number, type)
+  def initialize(number, type_train)
     @number = number
-    @type = type
+    @type_train = type_train
     validate!
     @carriages = []
     self.speed = 0
     self.class.trains ||= {}
-    self.class.trains[number] = type
+    self.class.trains[number] = type_train
   end
 
   def stop
@@ -36,7 +44,7 @@ class Train
   def add_carriage(carriage)
     return puts 'Поезд движется, невозможно прицепить вагон!' if speed != 0
 
-    @carriages << carriage if type == carriage.type
+    @carriages << carriage if type_train == carriage.type_carriage
   end
 
   def drop_carriage
@@ -78,7 +86,7 @@ class Train
   end
 
   def train_passenger?
-    type == :passenger
+    type_train == :passenger
   end
 
   def list_carriage(&block)
@@ -86,7 +94,7 @@ class Train
   end
 
   def to_s
-    "Поезд №: #{number} тип: #{type} кол-во вагонов: #{carriages.count}"
+    "Поезд №: #{number} тип: #{type_train} кол-во вагонов: #{carriages.count}"
   end
 
   private
@@ -95,18 +103,5 @@ class Train
 
   def current_index
     route.stations.index(current_station)
-  end
-
-  def validate!
-    raise 'Тип поезда должен быть Symbol' unless type.instance_of? Symbol
-
-    if type !~ TYPE_FORMAT
-      raise 'Неверные тип поезда! Тип должен содержать не менее 3-х символов,
-             включая только строчные или прописные буквы!'
-    end
-    raise 'Номер поезда должен быть текстовым' unless number.instance_of? String
-    raise 'Неверный формат номера поезда' if number !~ NUMBER_FORMAT
-
-    true
   end
 end
